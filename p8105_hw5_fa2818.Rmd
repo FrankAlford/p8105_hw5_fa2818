@@ -74,3 +74,53 @@ longitudinal_df =
 
 ```
 
+
+```{r}
+longitudinal_df |>
+  ggplot(aes(x = week, y = outcome,
+             group = subject, color = arm)) +
+  geom_point() +
+  geom_line() +
+  facet_grid(.~arm) 
+```
+
+```{r}
+sim_t_test = function(mu) {
+
+sim_data = tibble(x = rnorm(30, mean = mu, sd = 5))
+
+t.test(sim_data$x, mu = 0) |>
+    broom::tidy() |>
+    select(estimate, p.value)
+}
+
+```
+
+
+
+```{r}
+sim_t_test(0)
+sim_t_test(3)
+```
+
+```{r}
+
+sim_results =
+  expand_grid(
+    mu = 0:6,
+    iter = 1:5000
+  ) |>
+  mutate(
+    results = map(mu, sim_t_test)
+  ) |>
+  unnest(results) |>
+  mutate(
+    reject = p.value < 0.05
+  )
+
+```
+
+```{r}
+
+```
+
