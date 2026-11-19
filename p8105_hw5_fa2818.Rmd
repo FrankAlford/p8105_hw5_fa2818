@@ -44,13 +44,13 @@ The quick increase in probability is counter-intuitive. The curve increases quic
 
 # Problem 2
 
-```{r}
+```{r, message=FALSE}
 
 longitudinal_df =
   tibble(
     files = list.files("data/"),
     path = str_c("data/", files)
-  ) |>
+  ) |> 
   mutate(
     data = map(path, read_csv)
   ) |>
@@ -122,5 +122,17 @@ sim_results =
 
 ```{r}
 
-```
+power_results =
+  sim_results |>
+  group_by(mu) |>
+  summarize(
+    power = mean(reject)
+  )
 
+power_results |>
+  ggplot(aes(x = mu, y = power)) +
+  geom_point() +
+  geom_line()
+
+```
+As the population mean increases, the power increaes.
